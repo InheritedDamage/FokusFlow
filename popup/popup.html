@@ -150,6 +150,11 @@
   </main>
 
   <script src="../shared/ext.js"></script>
+  <script>
+    if (window.ext && window.ext.isStandalone) {
+      document.write('<script src="../background.js"><\/script>');
+    }
+  </script>
   <script src="popup.js"></script>
 </body>
 </html>

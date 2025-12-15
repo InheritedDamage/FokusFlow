@@ -1,0 +1,258 @@
+:root {
+  --bg: #0f1115;
+  --card: #171a21;
+  --muted: #8b93a7;
+  --text: #e7eaf2;
+  --accent: #8dd7ff;
+  --danger: #ff7a7a;
+  --line: rgba(255,255,255,0.08);
+  --coffee: #7a4e2f;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  background: var(--bg);
+  color: var(--text);
+  width: 360px;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 12px 6px;
+}
+
+.brand { display: flex; gap: 10px; align-items: center; }
+.logoDot {
+  width: 14px; height: 14px; border-radius: 8px;
+  background: var(--accent);
+  box-shadow: 0 0 18px rgba(141, 215, 255, 0.45);
+}
+.name { font-weight: 700; letter-spacing: 0.2px; }
+.sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
+
+.iconBtn {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+main { padding: 10px 12px 14px; display: grid; gap: 12px; }
+
+.timerCard, .tasksCard, .settingsCard {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+.modeTabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.tab {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--line);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 8px 0;
+  cursor: pointer;
+  font-weight: 600;
+}
+.tab.active {
+  background: rgba(141, 215, 255, 0.12);
+  border-color: rgba(141, 215, 255, 0.35);
+}
+
+.cupWrap { position: relative; display: grid; place-items: center; padding: 6px 0 2px; }
+.cup { width: 210px; height: 210px; }
+
+.cupBody { fill: rgba(255,255,255,0.10); }
+.cupInner { fill: rgba(0,0,0,0.18); }
+.rim { fill: rgba(255,255,255,0.08); }
+.handle { fill: rgba(255,255,255,0.10); }
+.saucer { fill: rgba(255,255,255,0.08); }
+
+.coffee {
+  fill: var(--coffee);
+  transition: y 0.35s ease, height 0.35s ease;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25));
+}
+
+.steam {
+  fill: none;
+  stroke: rgba(255,255,255,0.18);
+  stroke-width: 4;
+  stroke-linecap: round;
+  opacity: 0.9;
+}
+.steam.s1 { animation: steam 2.8s ease-in-out infinite; }
+.steam.s2 { animation: steam 3.2s ease-in-out infinite; }
+.steam.s3 { animation: steam 2.6s ease-in-out infinite; }
+@keyframes steam {
+  0%, 100% { transform: translateY(0); opacity: 0.55; }
+  50% { transform: translateY(-6px); opacity: 1; }
+}
+
+.timeOverlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  padding-top: 6px;
+}
+.time {
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-shadow: 0 6px 20px rgba(0,0,0,0.45);
+}
+.meta {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--muted);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.meta .dot { opacity: 0.6; }
+
+.metaTask {
+  margin-top: 6px;
+  font-size: 12px;
+  color: rgba(231,234,242,0.85);
+  max-width: 280px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.primary, .ghost, .mini {
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  padding: 10px 10px;
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.primary {
+  background: rgba(141, 215, 255, 0.14);
+  border-color: rgba(141, 215, 255, 0.35);
+}
+.ghost { background: rgba(255,255,255,0.04); }
+.mini { padding: 10px 12px; background: rgba(255,255,255,0.06); }
+
+.taskBar { margin-top: 10px; display: grid; gap: 6px; }
+.label { font-size: 12px; color: var(--muted); }
+
+select, input[type="number"], input {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(0,0,0,0.18);
+  color: var(--text);
+  padding: 10px 10px;
+  outline: none;
+}
+
+.tasksHeader { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.title { font-weight: 800; }
+
+.filters { display: flex; gap: 6px; }
+.chip {
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.04);
+  color: var(--text);
+  padding: 6px 10px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 12px;
+}
+.chip.active {
+  border-color: rgba(141,215,255,0.35);
+  background: rgba(141,215,255,0.10);
+}
+
+.addRow { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-top: 10px; }
+.tasksList { margin-top: 10px; display: grid; gap: 8px; }
+
+.taskItem {
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.03);
+  border-radius: 14px;
+  padding: 10px;
+}
+
+.taskRow { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; }
+
+.taskTitle {
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+}
+.taskTitle.done { text-decoration: line-through; opacity: 0.65; }
+
+.taskMeta {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.taskActions { display: flex; gap: 6px; }
+.smallBtn {
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.04);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 6px 8px;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 12px;
+}
+.smallBtn.danger {
+  border-color: rgba(255,122,122,0.35);
+  background: rgba(255,122,122,0.08);
+}
+
+.subtasks { margin-top: 8px; padding-left: 18px; display: grid; gap: 8px; }
+.activeHighlight {
+  outline: 2px solid rgba(141,215,255,0.35);
+  box-shadow: 0 0 0 6px rgba(141,215,255,0.06);
+}
+
+.settingsTitle { font-weight: 900; margin-bottom: 10px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.grid2 label { font-size: 12px; color: var(--muted); display: grid; gap: 6px; }
+.toggles { margin-top: 12px; display: grid; gap: 8px; }
+.toggle { display: flex; gap: 10px; align-items: center; color: var(--text); }
+.toggle span { font-weight: 700; }
+.settingsFooter { margin-top: 12px; }
+
+.hidden { display: none; }
+.divider { height: 1px; background: var(--line); margin: 12px 0; }
+.dataRow { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.fileLabel { display: grid; place-items: center; }
+.hint { margin-top: 10px; color: var(--muted); font-size: 12px; line-height: 1.35; }

@@ -16,6 +16,19 @@
   const isStandalone = !(hasBrowser || hasChrome);
 
   function createStandaloneApi() {
+    const memoryStore = new Map();
+    let storageMode = "localStorage"; // fallback to memory if blocked (e.g., file:// + strict/privacy)
+    let warnedMemory = false;
+
+    function useMemoryFallback(err) {
+      if (storageMode === "memory") return;
+      storageMode = "memory";
+      if (!warnedMemory) {
+        console.warn("FokusFlow standalone: localStorage unavailable, using in-memory storage only.", err);
+        warnedMemory = true;
+      }
+    }
+
     const messageListeners = [];
     const alarmListeners = [];
     const installedListeners = [];
@@ -75,19 +88,35 @@
           const out = {};
           const arr = Array.isArray(keys) ? keys : [keys];
           for (const k of arr) {
+            if (k === undefined || k === null) continue;
+            if (storageMode === "memory") {
+              out[k] = memoryStore.has(k) ? memoryStore.get(k) : undefined;
+              continue;
+            }
             try {
               const raw = localStorage.getItem(k);
               out[k] = raw != null ? JSON.parse(raw) : undefined;
-            } catch (_) {
-              out[k] = undefined;
+            } catch (e) {
+              useMemoryFallback(e);
+              out[k] = memoryStore.has(k) ? memoryStore.get(k) : undefined;
             }
           }
           return Promise.resolve(out);
         },
         set: (obj) => {
           if (!obj || typeof obj !== "object") return Promise.resolve();
-          for (const [k, v] of Object.entries(obj)) {
-            try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { console.error(e); }
+          const entries = Object.entries(obj);
+          if (storageMode === "memory") {
+            for (const [k, v] of entries) memoryStore.set(k, v);
+            return Promise.resolve();
+          }
+          for (const [k, v] of entries) {
+            try {
+              localStorage.setItem(k, JSON.stringify(v));
+            } catch (e) {
+              useMemoryFallback(e);
+              memoryStore.set(k, v);
+            }
           }
           return Promise.resolve();
         }

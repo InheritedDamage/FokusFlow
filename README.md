@@ -32,7 +32,7 @@ Note: Safari ships WebExtensions as a container app (not as a simple ZIP like Ch
 
 ## Quickstart (Standalone Web, ohne Add-on)
 1. Open `popup/popup.html` directly in the browser (no install).
-2. Data is stored in the browser `localStorage`.
+2. Data is stored in the browser `localStorage` (falls das blockiert ist, nur im Tab-Speicher).
 3. Limitations: no badge icon, timer keeps running only while the tab stays open/active (no Service Worker).
 
 ## Data & Storage

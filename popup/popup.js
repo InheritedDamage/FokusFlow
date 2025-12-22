@@ -5,6 +5,10 @@ const THEME_KEY = "FF_THEME";
 const DEFAULT_BELL_VOLUME = 0.28;
 const DEFAULT_BELL_REPEATS = 2;
 const BELL_DURATION = 1.2; // seconds
+const IS_STANDALONE = typeof ext !== "undefined" && !!ext.isStandalone;
+const BASE_TITLE = document.title;
+const ATTENTION_MAX_TOGGLES = 30;
+let attentionTimer = null;
 
 const el = (id) => document.getElementById(id);
 let bellCtx = null;
@@ -252,6 +256,48 @@ function setFilter(filter) {
   renderTasks(STATE.tasks, STATE.timer.currentTaskId);
 }
 
+function updateLayoutForSettings() {
+  const open = !el("settingsPanel").classList.contains("hidden");
+  document.body.classList.toggle("settings-open", open);
+  if (open && IS_STANDALONE) window.scrollTo(0, 0);
+}
+
+function stopAttention() {
+  if (attentionTimer) {
+    clearInterval(attentionTimer);
+    attentionTimer = null;
+  }
+  document.title = BASE_TITLE;
+}
+
+async function maybeNotify(modeLabel) {
+  if (!("Notification" in window)) return;
+  if (Notification.permission === "granted") {
+    new Notification("FokusFlow", { body: `${modeLabel} finished`, silent: true, requireInteraction: true });
+    return;
+  }
+  if (Notification.permission === "default") {
+    try {
+      const res = await Notification.requestPermission();
+      if (res === "granted") new Notification("FokusFlow", { body: `${modeLabel} finished`, silent: true, requireInteraction: true });
+    } catch (_) {}
+  }
+}
+
+function startAttention(modeLabel) {
+  if (document.hasFocus()) return;
+  stopAttention();
+
+  let toggles = 0;
+  attentionTimer = setInterval(() => {
+    document.title = document.title === BASE_TITLE ? "⏰ FokusFlow" : BASE_TITLE;
+    toggles += 1;
+    if (toggles >= ATTENTION_MAX_TOGGLES) stopAttention();
+  }, 700);
+
+  maybeNotify(modeLabel);
+}
+
 function getBellSettings(overrides = {}) {
   const volume = clamp(
     typeof overrides.volume === "number" ? overrides.volume : (STATE?.settings?.bellVolume ?? DEFAULT_BELL_VOLUME),
@@ -363,6 +409,7 @@ function applyTheme(theme) {
 }
 
 async function init() {
+  if (IS_STANDALONE) document.body.classList.add("layout-standalone");
   applyTheme(getThemePreference());
   STATE = await send({ type: "FF_GET_STATE" });
 
@@ -386,6 +433,7 @@ async function init() {
   el("btnSkip").addEventListener("click", async () => {
     STATE = await send({ type: "FF_TIMER_SKIP" });
     renderAll();
+    stopAttention();
   });
 
   el("btnAddTask").addEventListener("click", async () => {
@@ -412,6 +460,8 @@ async function init() {
 
   el("btnToggleSettings").addEventListener("click", () => {
     el("settingsPanel").classList.toggle("hidden");
+    updateLayoutForSettings();
+    stopAttention();
   });
 
   const syncBellToState = (vals) => {
@@ -447,6 +497,7 @@ async function init() {
     btnTheme.addEventListener("click", () => {
       const next = document.body.classList.contains("theme-light") ? "dark" : "light";
       applyTheme(next);
+      stopAttention();
     });
   }
 
@@ -465,6 +516,7 @@ async function init() {
     };
     STATE = await send({ type: "FF_SETTINGS_UPDATE", patch });
     renderAll();
+    stopAttention();
   });
 
   el("btnExport").addEventListener("click", () => {
@@ -505,6 +557,8 @@ async function init() {
     if (msg && msg.type === "FF_STATE_UPDATED") {
       STATE = msg.payload;
       ringBell();
+      const label = STATE.timer.mode === "focus" ? "Focus" : (STATE.timer.mode === "short" ? "Short break" : "Long break");
+      startAttention(label);
       renderAll();
     }
   });
@@ -514,8 +568,12 @@ async function init() {
     renderTimer(STATE);
   }, 250);
 
+  window.addEventListener("focus", stopAttention);
+  window.addEventListener("click", stopAttention);
+
   setFilter("active");
   renderAll();
+  updateLayoutForSettings();
 }
 
 init();

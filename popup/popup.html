@@ -27,36 +27,41 @@
       </div>
 
       <div class="cupWrap">
-        <svg viewBox="0 0 200 200" class="cup" aria-label="Coffee cup timer">
-          <defs>
-            <clipPath id="innerClip">
-              <rect x="58" y="70" width="84" height="78" rx="14" ry="14"></rect>
-            </clipPath>
-          </defs>
+        <div class="cupCanvas">
+          <div class="timeOverlay">
+            <div id="timeLeft" class="time">25:00</div>
+          </div>
 
-          <path class="steam s1" d="M70 55 C60 45, 85 35, 75 25"></path>
-          <path class="steam s2" d="M100 55 C90 45, 115 35, 105 25"></path>
-          <path class="steam s3" d="M130 55 C120 45, 145 35, 135 25"></path>
+          <svg viewBox="0 0 200 200" class="cup" aria-label="Coffee cup timer">
+            <defs>
+              <clipPath id="innerClip">
+                <rect x="58" y="70" width="84" height="78" rx="14" ry="14"></rect>
+              </clipPath>
+            </defs>
 
-          <ellipse cx="100" cy="165" rx="68" ry="12" class="saucer"></ellipse>
+            <path class="steam s1" d="M70 55 C60 45, 85 35, 75 25"></path>
+            <path class="steam s2" d="M100 55 C90 45, 115 35, 105 25"></path>
+            <path class="steam s3" d="M130 55 C120 45, 145 35, 135 25"></path>
 
-          <rect x="50" y="60" width="100" height="100" rx="18" ry="18" class="cupBody"></rect>
-          <rect x="55" y="65" width="90" height="90" rx="16" ry="16" class="cupInner"></rect>
+            <ellipse cx="100" cy="165" rx="68" ry="12" class="saucer"></ellipse>
 
-          <rect id="coffeeFill" x="58" y="70" width="84" height="78" rx="14" ry="14"
-                class="coffee" clip-path="url(#innerClip)"></rect>
+            <rect x="50" y="60" width="100" height="100" rx="18" ry="18" class="cupBody"></rect>
+            <rect x="55" y="65" width="90" height="90" rx="16" ry="16" class="cupInner"></rect>
 
-          <path class="handle" d="M150 85
-            C175 85, 175 135, 150 135
-            L150 125
-            C162 125, 162 95, 150 95
-            Z"></path>
+            <rect id="coffeeFill" x="58" y="70" width="84" height="78" rx="14" ry="14"
+                  class="coffee" clip-path="url(#innerClip)"></rect>
 
-          <rect x="50" y="60" width="100" height="18" rx="18" ry="18" class="rim"></rect>
-        </svg>
+            <path class="handle" d="M150 85
+              C175 85, 175 135, 150 135
+              L150 125
+              C162 125, 162 95, 150 95
+              Z"></path>
 
-        <div class="timeOverlay">
-          <div id="timeLeft" class="time">25:00</div>
+            <rect x="50" y="60" width="100" height="18" rx="18" ry="18" class="rim"></rect>
+          </svg>
+        </div>
+
+        <div class="cupInfo">
           <div class="meta">
             <span id="metaMode">Focus</span>
             <span class="dot">•</span>

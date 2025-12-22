@@ -1,6 +1,7 @@
 let STATE = null;
 let FILTER = "active";
 let uiTick = null;
+const THEME_KEY = "FF_THEME";
 
 const el = (id) => document.getElementById(id);
 
@@ -239,7 +240,30 @@ function setFilter(filter) {
   renderTasks(STATE.tasks, STATE.timer.currentTaskId);
 }
 
+function getThemePreference() {
+  return localStorage.getItem(THEME_KEY) === "light" ? "light" : "dark";
+}
+
+function applyTheme(theme) {
+  const body = document.body;
+  const normalized = theme === "light" ? "light" : "dark";
+
+  body.classList.remove("theme-light", "theme-dark");
+  body.classList.add(normalized === "light" ? "theme-light" : "theme-dark");
+  localStorage.setItem(THEME_KEY, normalized);
+
+  const btn = el("btnToggleTheme");
+  const icon = el("themeIcon");
+  if (btn && icon) {
+    const switchingTo = normalized === "light" ? "dark" : "light";
+    icon.src = switchingTo === "dark" ? "../icons/dark-mode.png" : "../icons/light-mode.png";
+    icon.alt = switchingTo === "dark" ? "Switch to dark mode" : "Switch to light mode";
+    btn.title = switchingTo === "dark" ? "Switch to dark mode" : "Switch to light mode";
+  }
+}
+
 async function init() {
+  applyTheme(getThemePreference());
   STATE = await send({ type: "FF_GET_STATE" });
 
   document.querySelectorAll(".tab").forEach((b) => {
@@ -289,6 +313,14 @@ async function init() {
   el("btnToggleSettings").addEventListener("click", () => {
     el("settingsPanel").classList.toggle("hidden");
   });
+
+  const btnTheme = el("btnToggleTheme");
+  if (btnTheme) {
+    btnTheme.addEventListener("click", () => {
+      const next = document.body.classList.contains("theme-light") ? "dark" : "light";
+      applyTheme(next);
+    });
+  }
 
   el("btnSaveSettings").addEventListener("click", async () => {
     const patch = {

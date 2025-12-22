@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="popup.css" />
   <title>FokusFlow</title>
 </head>
-<body>
+<body class="theme-dark">
   <header class="top">
     <div class="brand">
       <div class="logoDot"></div>
@@ -15,7 +15,12 @@
         <div class="sub">Offline Pomodoro + Tasks</div>
       </div>
     </div>
-    <button id="btnToggleSettings" class="iconBtn" title="Settings">⚙️</button>
+    <div class="topActions">
+      <button id="btnToggleSettings" class="iconBtn" title="Settings">⚙️</button>
+      <button id="btnToggleTheme" class="iconBtn" title="Switch theme">
+        <img id="themeIcon" class="iconImg" src="../icons/light-mode.png" alt="Switch to light mode" />
+      </button>
+    </div>
   </header>
 
   <main>

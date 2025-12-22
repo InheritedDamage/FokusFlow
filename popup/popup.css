@@ -9,6 +9,20 @@
   --coffee: #7a4e2f;
 }
 
+body.theme-light {
+  --bg: #f6f8fb;
+  --card: #ffffff;
+  --muted: #5d6473;
+  --text: #1f2430;
+  --accent: #2d8bd7;
+  --danger: #d64545;
+  --line: rgba(0,0,0,0.08);
+  --coffee: #a56b42;
+  color-scheme: light;
+}
+
+body.theme-dark { color-scheme: dark; }
+
 * { box-sizing: border-box; }
 body {
   margin: 0;
@@ -24,6 +38,8 @@ body {
   justify-content: space-between;
   padding: 12px 12px 6px;
 }
+
+.topActions { display: flex; gap: 8px; }
 
 .brand { display: flex; gap: 10px; align-items: center; }
 .logoDot {
@@ -42,6 +58,7 @@ body {
   padding: 6px 10px;
   cursor: pointer;
 }
+.iconImg { width: 18px; height: 18px; display: block; }
 
 main { padding: 10px 12px 14px; display: grid; gap: 12px; }
 
@@ -187,6 +204,28 @@ select, input[type="number"], input {
   padding: 10px 10px;
   outline: none;
 }
+
+select option {
+  color: #0f1115;
+  background: #f6f8fb;
+}
+
+body.theme-light .tab { background: rgba(0,0,0,0.04); }
+body.theme-light .tab.active { border-color: rgba(45,139,215,0.30); background: rgba(45,139,215,0.12); }
+body.theme-light .cupBody { fill: rgba(0,0,0,0.06); }
+body.theme-light .cupInner { fill: rgba(0,0,0,0.04); }
+body.theme-light .rim { fill: rgba(0,0,0,0.08); }
+body.theme-light .handle { fill: rgba(0,0,0,0.06); }
+body.theme-light .saucer { fill: rgba(0,0,0,0.05); }
+body.theme-light .steam { stroke: rgba(0,0,0,0.16); }
+body.theme-light select, body.theme-light input[type="number"], body.theme-light input { background: rgba(0,0,0,0.04); }
+body.theme-light .ghost { background: rgba(0,0,0,0.03); }
+body.theme-light .mini { background: rgba(0,0,0,0.05); }
+body.theme-light .chip { background: rgba(0,0,0,0.04); }
+body.theme-light .taskItem { background: rgba(0,0,0,0.02); }
+body.theme-light .smallBtn { background: rgba(0,0,0,0.03); }
+body.theme-light .smallBtn.danger { border-color: rgba(214,69,69,0.35); background: rgba(214,69,69,0.08); }
+body.theme-light .metaTask { color: rgba(31,36,48,0.85); }
 
 .tasksHeader { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .title { font-weight: 800; }

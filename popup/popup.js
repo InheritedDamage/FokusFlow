@@ -2,8 +2,12 @@ let STATE = null;
 let FILTER = "active";
 let uiTick = null;
 const THEME_KEY = "FF_THEME";
+const DEFAULT_BELL_VOLUME = 0.28;
+const DEFAULT_BELL_REPEATS = 2;
+const BELL_DURATION = 1.2; // seconds
 
 const el = (id) => document.getElementById(id);
+let bellCtx = null;
 
 function fmt(sec) {
   const s = Math.max(0, Math.floor(sec));
@@ -16,6 +20,10 @@ function computeRemaining(timer) {
   if (!timer.isRunning || !timer.endsAt) return Math.max(0, timer.remainingSec);
   const ms = timer.endsAt - Date.now();
   return Math.max(0, Math.ceil(ms / 1000));
+}
+
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
 }
 
 async function send(msg) {
@@ -107,6 +115,10 @@ function renderSettings(settings) {
   el("setAutoBreak").checked = !!settings.autoStartBreak;
   el("setAutoFocus").checked = !!settings.autoStartFocus;
   el("setBadge").checked = settings.badgeCountdown !== false;
+
+  const volPct = Math.round(clamp((settings.bellVolume ?? DEFAULT_BELL_VOLUME) * 100, 5, 80));
+  const repeats = Math.round(clamp(settings.bellRepeats ?? DEFAULT_BELL_REPEATS, 1, 4));
+  updateBellSliderUI({ volumePct: volPct, repeats });
 }
 
 function renderTasks(tasks, currentTaskId) {
@@ -240,6 +252,94 @@ function setFilter(filter) {
   renderTasks(STATE.tasks, STATE.timer.currentTaskId);
 }
 
+function getBellSettings(overrides = {}) {
+  const volume = clamp(
+    typeof overrides.volume === "number" ? overrides.volume : (STATE?.settings?.bellVolume ?? DEFAULT_BELL_VOLUME),
+    0.01,
+    0.8
+  );
+  const repeatsRaw = typeof overrides.repeats === "number" ? overrides.repeats : (STATE?.settings?.bellRepeats ?? DEFAULT_BELL_REPEATS);
+  const repeats = Math.round(clamp(repeatsRaw, 1, 4));
+  return { volume, repeats };
+}
+
+function ringBell(options = {}) {
+  try {
+    bellCtx = bellCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (bellCtx.state === "suspended") bellCtx.resume();
+
+    const ctx = bellCtx;
+    const now = ctx.currentTime;
+    const { volume, repeats } = getBellSettings(options);
+    const gap = BELL_DURATION * 0.6;
+
+    const playAt = (startTime) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(1200, startTime);
+      osc.frequency.setValueAtTime(900, startTime + 0.25);
+
+      gain.gain.setValueAtTime(0.0001, startTime);
+      gain.gain.exponentialRampToValueAtTime(volume, startTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startTime + BELL_DURATION);
+
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(startTime);
+      osc.stop(startTime + BELL_DURATION + 0.05);
+    };
+
+    for (let i = 0; i < repeats; i += 1) {
+      playAt(now + (i * gap));
+    }
+  } catch (_) {
+    // ignore audio errors (e.g. autoplay restrictions)
+  }
+}
+
+function setRangeFill(input, value) {
+  if (!input) return;
+  const min = Number(input.min || 0);
+  const max = Number(input.max || 100);
+  const pct = clamp(((value - min) / Math.max(1, max - min)) * 100, 0, 100);
+  input.style.background = `linear-gradient(90deg, var(--accent) 0%, var(--accent) ${pct}%, var(--line) ${pct}%, var(--line) 100%)`;
+}
+
+function sliderValuesFromUI() {
+  const volPct = Number(el("setBellVolume")?.value ?? Math.round(DEFAULT_BELL_VOLUME * 100));
+  const repeats = Number(el("setBellRepeats")?.value ?? DEFAULT_BELL_REPEATS);
+  return {
+    volumePct: clamp(volPct, 5, 80),
+    repeats: Math.round(clamp(repeats, 1, 4))
+  };
+}
+
+function updateBellSliderUI(values) {
+  const { volumePct, repeats } = values;
+  const volLabel = el("bellVolumeLabel");
+  const repLabel = el("bellRepeatsLabel");
+  const volInput = el("setBellVolume");
+  const repInput = el("setBellRepeats");
+
+  if (volLabel) volLabel.textContent = `${Math.round(volumePct)}%`;
+  if (repLabel) repLabel.textContent = `${repeats}x`;
+  if (volInput) {
+    volInput.value = volumePct;
+    setRangeFill(volInput, volumePct);
+  }
+  if (repInput) {
+    repInput.value = repeats;
+    setRangeFill(repInput, repeats);
+  }
+}
+
+function previewBellFromSliders() {
+  const { volumePct, repeats } = sliderValuesFromUI();
+  const gain = clamp(volumePct / 100, 0.01, 0.8);
+  ringBell({ volume: gain, repeats });
+}
+
 function getThemePreference() {
   return localStorage.getItem(THEME_KEY) === "light" ? "light" : "dark";
 }
@@ -314,6 +414,34 @@ async function init() {
     el("settingsPanel").classList.toggle("hidden");
   });
 
+  const syncBellToState = (vals) => {
+    if (STATE && STATE.settings) {
+      STATE.settings.bellVolume = clamp(vals.volumePct / 100, 0.01, 0.8);
+      STATE.settings.bellRepeats = vals.repeats;
+    }
+  };
+  const onBellInput = () => {
+    const vals = sliderValuesFromUI();
+    updateBellSliderUI(vals);
+    syncBellToState(vals);
+  };
+  const onBellChange = () => {
+    const vals = sliderValuesFromUI();
+    updateBellSliderUI(vals);
+    syncBellToState(vals);
+    previewBellFromSliders();
+  };
+  const volInput = el("setBellVolume");
+  const repInput = el("setBellRepeats");
+  if (volInput) {
+    volInput.addEventListener("input", onBellInput);
+    volInput.addEventListener("change", onBellChange);
+  }
+  if (repInput) {
+    repInput.addEventListener("input", onBellInput);
+    repInput.addEventListener("change", onBellChange);
+  }
+
   const btnTheme = el("btnToggleTheme");
   if (btnTheme) {
     btnTheme.addEventListener("click", () => {
@@ -323,6 +451,7 @@ async function init() {
   }
 
   el("btnSaveSettings").addEventListener("click", async () => {
+    const bellVals = sliderValuesFromUI();
     const patch = {
       focusMin: Number(el("setFocus").value),
       shortMin: Number(el("setShort").value),
@@ -330,7 +459,9 @@ async function init() {
       longEvery: Number(el("setEvery").value),
       autoStartBreak: !!el("setAutoBreak").checked,
       autoStartFocus: !!el("setAutoFocus").checked,
-      badgeCountdown: !!el("setBadge").checked
+      badgeCountdown: !!el("setBadge").checked,
+      bellVolume: clamp(bellVals.volumePct / 100, 0.01, 0.8),
+      bellRepeats: bellVals.repeats
     };
     STATE = await send({ type: "FF_SETTINGS_UPDATE", patch });
     renderAll();
@@ -373,6 +504,7 @@ async function init() {
   ext.api.runtime.onMessage.addListener((msg) => {
     if (msg && msg.type === "FF_STATE_UPDATED") {
       STATE = msg.payload;
+      ringBell();
       renderAll();
     }
   });

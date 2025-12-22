@@ -139,6 +139,26 @@
         </label>
       </div>
 
+      <div class="divider"></div>
+
+      <div class="audioSettings">
+        <div class="label">Bell</div>
+        <div class="sliderRow">
+          <div class="sliderLabel">
+            <span>Volume</span>
+            <span id="bellVolumeLabel"></span>
+          </div>
+          <input id="setBellVolume" type="range" min="5" max="80" value="28" />
+        </div>
+        <div class="sliderRow">
+          <div class="sliderLabel">
+            <span>Repeats</span>
+            <span id="bellRepeatsLabel"></span>
+          </div>
+          <input id="setBellRepeats" type="range" min="1" max="4" step="1" value="2" />
+        </div>
+      </div>
+
       <div class="settingsFooter">
         <button id="btnSaveSettings" class="primary">Save</button>
       </div>

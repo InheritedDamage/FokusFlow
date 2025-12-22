@@ -19,6 +19,8 @@ const DEFAULT_SETTINGS = {
   autoStartBreak: true,
   autoStartFocus: false,
   badgeCountdown: true,
+  bellVolume: 0.28,
+  bellRepeats: 2,
   // Notifications sind absichtlich NICHT Kernfeature (Safari teils zickig).
   // Wir nutzen Badge + Popup UI zuverlässig offline.
 };
@@ -43,7 +45,7 @@ function durationForMode(settings, mode) {
 
 async function loadAll() {
   const data = await ext.storageGet([KEY_SETTINGS, KEY_TIMER, KEY_TASKS, KEY_SESSIONS]);
-  const settings = data[KEY_SETTINGS] || DEFAULT_SETTINGS;
+  const settings = { ...DEFAULT_SETTINGS, ...(data[KEY_SETTINGS] || {}) };
   const tasks = data[KEY_TASKS] || [];
   const sessions = data[KEY_SESSIONS] || [];
 
@@ -330,6 +332,9 @@ async function setCurrentTask(taskId) {
 async function updateSettings(patch) {
   const state = await loadAll();
   state.settings = { ...state.settings, ...(patch || {}) };
+
+  state.settings.bellVolume = Math.min(0.8, Math.max(0.01, Number(state.settings.bellVolume ?? DEFAULT_SETTINGS.bellVolume)));
+  state.settings.bellRepeats = Math.max(1, Math.min(4, Math.round(Number(state.settings.bellRepeats ?? DEFAULT_SETTINGS.bellRepeats))));
 
   // If timer not running, recalc current mode duration
   if (!state.timer.isRunning) {

@@ -89,6 +89,6 @@ Hey there! I'm Dennis Zajonz, and FokusFlow is my personal side project. I wante
 <br><br>
 <b>FokusFlow</b>
 Version 1.0.0<br>
-Get latest updates at Github<br><br>
+Get latest updates at <a href="https://github.com/InheritedDamage/FokusFlow/releases"> Github</a><br><br>
 by Dennis Zajonz (NoLimitsCoding GmbH)<br>
-www.nolimitscoding.de | www.stocknav.ai
+<a href="https://nolimitscoding.de">www.nolimitscoding.de</a> | <a href="https://stocknav.ai">www.stocknav.ai</a>

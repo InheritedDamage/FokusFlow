@@ -1,3 +1,5 @@
+// Author: Dennis Zajonz | Company: NoLimitsCoding GmbH | Web: www.nolimitscoding.de | FokusFlow v1.0.0
+
 let STATE = null;
 let FILTER = "active";
 let uiTick = null;

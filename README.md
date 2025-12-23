@@ -3,24 +3,40 @@
 Hey there! I'm Dennis Zajonz, and FokusFlow is my personal side project. I wanted a Pomodoro timer with tasks that wasn't online or tied to my phone - being connected means emails, messages, and endless pings, and the web/mobile apps I tried didn't feel right. When I need a calm break from building StockNav (NoLimitsCoding GmbH's product), I tinker on FokusFlow: an offline-first timer that keeps every bit of your data on your own device - no servers, no cloud, no peeking platforms.
 
 ## Features
-- Offline Pomodoro (Focus / Short Break / Long Break)
-- Tasks + Subtasks
-- A task can be marked as **Done** or **deleted** (deleting a parent also deletes its subtasks)
-- Select an **active task** to attribute Pomodoros to it
-- Coffee-cup visualization: the cup fills/empties proportionally to the remaining time
-- Offline persistence via `storage.local`:
-  - Tasks/Subtasks including `done` state and `pomos` per task
-  - TimerState (mode, running, `endsAt`, etc.)
-  - Sessions history (each session completion is logged)
+<div style="display:flex; gap:16px; align-items:flex-start; flex-wrap:nowrap;">
+  <div style="flex:1; min-width:0;">
+
+  - Offline Pomodoro (Focus / Short Break / Long Break)
+  - Tasks + Subtasks
+  - A task can be marked as **Done** or **deleted** (deleting a parent also deletes its subtasks)
+  - Select an **active task** to attribute Pomodoros to it
+  - Coffee-cup visualization: the cup fills/empties proportionally to the remaining time
+  - Offline persistence via `storage.local`:
+    - Tasks/Subtasks including `done` state and `pomos` per task
+    - TimerState (mode, running, `endsAt`, etc.)
+    - Sessions history (each session completion is logged)
+  </div>
+  <div style="flex:0 0 auto;">
+    <img src="FokusFlow.png" alt="FokusFlow UI" width="360" />
+  </div>
+</div>
 
 ## How it works & settings
-- Timer: Focus / Short / Long modes with start/pause, today counter, and a coffee-cup fill to show remaining time.
-- Tasks: Parents + subtasks, quick rename/delete, mark done, and pick an active task to attribute Pomodoros; filter by active/done/all.
-- Custom durations: Set focus, short, and long break lengths plus “long every N sessions.”
-- Auto-start: Toggle auto-start for breaks and for the next focus session.
-- Notifications: Toggle badge countdown (extensions) and adjust bell volume + repeat count; preview from the sliders.
-- Appearance: Light/dark theme toggle stored locally.
-- Backup: Export/import all data (tasks + settings) as JSON for backup or migration.
+<div style="display:flex; gap:16px; align-items:flex-start; flex-wrap:nowrap;">
+  <div style="flex:0 0 auto;">
+    <img src="FokusFlowSettings.png" alt="FokusFlow settings" width="360" />
+  </div>
+  <div style="flex:1; min-width:0;">
+
+  - Timer: Focus / Short / Long modes with start/pause, today counter, and a coffee-cup fill to show remaining time.
+  - Tasks: Parents + subtasks, quick rename/delete, mark done, and pick an active task to attribute Pomodoros; filter by active/done/all.
+  - Custom durations: Set focus, short, and long break lengths plus “long every N sessions.”
+  - Auto-start: Toggle auto-start for breaks and for the next focus session.
+  - Notifications: Toggle badge countdown (extensions) and adjust bell volume + repeat count; preview from the sliders.
+  - Appearance: Light/dark theme toggle stored locally.
+  - Backup: Export/import all data (tasks + settings) as JSON for backup or migration.
+  </div>
+</div>
 
 ## Why multiple manifests?
 - **Chrome/Edge:** Manifest V3 requires `background.service_worker`.

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# Author: Dennis Zajonz | Company: NoLimitsCoding GmbH | Web: www.nolimitscoding.de | FokusFlow v1.0.0
 set -euo pipefail
 
 # Resolve project path and target HTML

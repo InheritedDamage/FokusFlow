@@ -1,4 +1,5 @@
 /* background.js */
+// Author: Dennis Zajonz | Company: NoLimitsCoding GmbHJ | Web: www.nolimitscoding.de | FokusFlow v1.0.0
 
 // In Chromium MV3 SW: need importScripts. In Firefox background script: ext.js is already loaded via manifest.
 try { importScripts("shared/ext.js"); } catch (_) {}

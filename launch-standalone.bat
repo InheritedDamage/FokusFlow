@@ -1,4 +1,5 @@
 @echo off
+rem Author: Dennis Zajonz | Company: NoLimitsCoding GmbH | Web: www.nolimitscoding.de | FokusFlow v1.0.0
 setlocal
 
 rem Launch FokusFlow in standalone mode (browser new window if available)
